@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="vel" default="0.1" />
+  <arg name="acc" default="0.3" />
+  <arg name="ang_vel" default="0.3" />
+  <arg name="ang_acc" default="0.3" />
+  <arg name="look_forward" default="0.1" />
+  <arg name="curv_forward" default="0.2" />
+  <arg name="slow_and_precise" default="true" />
+  <arg name="ip_address" default="192.168.0.10" />
+
+  <node pkg="trajectory_tracker" type="trajectory_tracker" name="spur">
+    <remap from="~/cmd_vel" to="cmd_vel" />
+    <remap from="~/odom" to="odom" />
+    <remap from="~/path" to="path" />
+
+    <param name="max_vel" value="$(arg vel)" />
+    <param name="max_acc" value="$(arg acc)" />
+    <param name="max_angvel" value="$(arg ang_vel)" />
+    <param name="max_angacc" value="$(arg ang_acc)" />
+
+    <param name="curv_forward" value="$(arg curv_forward)" />
+    <param name="look_forward" value="$(arg look_forward)" />
+
+    <param name="rotate_ang" value="0.2" />
+  </node>
+
+  <node pkg="ypspur_ros" type="ypspur_ros" name="ypspur_ros">
+    <param name="compatible" value="1" />
+    <remap from="cmd_vel" to="/ypspur_ros/cmd_vel" />
+    <remap from="odom" to="/ypspur_ros_ob_odom" />
+    
+  </node>
+
+  <group ns ="mobility_lidars">
+    <node pkg="urg_node" type="urg_node" name="urg_node" output="screen">
+      <param name="ip_address" value="$(arg ip_address)" />
+    </node>
+
+    <node pkg="laser_filters" type="scan_to_cloud_filter_chain" name="scan_to_cloud_filter_chain">
+      <param name="target_frame" type="string" value="laser" />
+      <remap from="cloud_filtered" to="cloud" />
+    </node>
+    
+    <node pkg="access_pointcloud" type="access_pointcloud" name="access_pointcloud" output="screen">
+      <remap from="~/cloud" to="cloud" />
+    </node>
+
+  </group> 
+
+  <node pkg="sq_charger_docking" type="charger_detection" name="charger_detection" />
+
+  <node pkg="sq_charger_docking" type="docking_controller" name="docking_controller" />
+
+</launch>

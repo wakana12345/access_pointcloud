@@ -9,10 +9,10 @@ class access_pointcloud
 
   void Callback(const sensor_msgs::PointCloud2ConstPtr& cloud)
   {
-    sensor_msgs::PointCloud2Iterator<float> iter_x(*cloud, "x");
-    sensor_msgs::PointCloud2Iterator<float> iter_y(*cloud, "y");
-    sensor_msgs::PointCloud2Iterator<float> iter_z(*cloud, "z");
-    sensor_msgs::PointCloud2Iterator<float> iter_i(*cloud, "intensity");
+    sensor_msgs::PointCloud2ConstIterator<float> iter_x(*cloud, "x");
+    sensor_msgs::PointCloud2ConstIterator<float> iter_y(*cloud, "y");
+    sensor_msgs::PointCloud2ConstIterator<float> iter_z(*cloud, "z");
+    sensor_msgs::PointCloud2ConstIterator<float> iter_i(*cloud, "intensity");
 
     for(; iter_x != iter_x.end(); ++iter_x, ++iter_y, ++iter_z, ++iter_i) 
     {
@@ -30,7 +30,7 @@ class access_pointcloud
   {
     ros::NodeHandle nh("~");
     sub_cloud = nh.subscribe<sensor_msgs::PointCloud2>("cloud",100,
-                                                       &access_pointcloud::Callback);
+                                                       &access_pointcloud::Callback,this);
   }
 };
 
