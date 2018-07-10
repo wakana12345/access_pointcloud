@@ -37,9 +37,7 @@ class access_cloud
     sub_cloud = nh.subscribe<sensor_msgs::PointCloud2>("cloud",100,
                                                        &access_cloud::Callback,this);
     
-
     pub_point = nh.advertise<access_pointcloud::PointXyzi>("point_xyzi",100);
-
   }
 };
 
