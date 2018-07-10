@@ -44,6 +44,8 @@
     
     <node pkg="access_pointcloud" type="access_pointcloud" name="access_pointcloud" output="screen">
       <remap from="~/cloud" to="cloud" />
+      <remap from="~/point_xyzi" to="point_xyzi" />
+
     </node>
 
   </group> 

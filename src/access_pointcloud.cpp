@@ -1,11 +1,16 @@
 #include <ros/ros.h>
 #include <sensor_msgs/point_cloud2_iterator.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <std_msgs/Float32.h>
+#include <access_pointcloud/PointXyzi.h>
 
-class access_pointcloud
+class access_cloud
 {
   private:
   ros::Subscriber sub_cloud;
+  ros::Publisher pub_point;
+
+  access_pointcloud::PointXyzi point;
 
   void Callback(const sensor_msgs::PointCloud2ConstPtr& cloud)
   {
@@ -16,27 +21,37 @@ class access_pointcloud
 
     for(; iter_x != iter_x.end(); ++iter_x, ++iter_y, ++iter_z, ++iter_i) 
     {
-      ROS_INFO("x=%f\n",*iter_x);
-      ROS_INFO("y=%f\n",*iter_y);
-      ROS_INFO("z=%f\n",*iter_z);
-      ROS_INFO("intensity=%f\n",*iter_i);
+      point.x = *iter_x;
+      point.y = *iter_y;
+      point.z = *iter_z;
+      point.i = *iter_i;
 
-      //今は表示だがmsg型作成してpublish できるようにしたい
+//      ROS_INFO("x %f",point.x);
+//      ROS_INFO("y %f",point.y);
+//      ROS_INFO("z %f",point.z);
+//      ROS_INFO("i %f",point.i);
+      
+//      pub_point.publish(point);
     }
+    pub_point.publish(point);
   }
 
   public:
-  access_pointcloud()
+  access_cloud()
   {
     ros::NodeHandle nh("~");
     sub_cloud = nh.subscribe<sensor_msgs::PointCloud2>("cloud",100,
-                                                       &access_pointcloud::Callback,this);
+                                                       &access_cloud::Callback,this);
+    
+
+    pub_point = nh.advertise<access_pointcloud::PointXyzi>("point_xyzi",100);
+
   }
 };
 
 int main(int argc, char** argv)
 {
   ros::init(argc,argv,"access_cloud");
-  access_pointcloud ac_pc;
+  access_cloud ac_pc;
   ros::spin();
 }
