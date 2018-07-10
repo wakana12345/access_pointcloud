@@ -25,14 +25,8 @@ class access_cloud
       point.y = *iter_y;
       point.z = *iter_z;
       point.i = *iter_i;
-
-//      ROS_INFO("x %f",point.x);
-//      ROS_INFO("y %f",point.y);
-//      ROS_INFO("z %f",point.z);
-//      ROS_INFO("i %f",point.i);
-      
-//      pub_point.publish(point);
     }
+    
     pub_point.publish(point);
   }
 
